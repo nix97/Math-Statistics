@@ -1,0 +1,1040 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ComCtrls, StdCtrls, Grids,math,
+  TabNotBk, ExtCtrls, Menus;
+
+type
+  TForm1 = class(TForm)
+    Label2: TLabel;
+    TabbedNotebook1: TTabbedNotebook;
+    Label1: TLabel;
+    Edit1: TEdit;
+    Button1: TButton;
+    Button2: TButton;
+    LabMean: TLabel;
+    LabMedian: TLabel;
+    LabRange: TLabel;
+    MemoModus: TMemo;
+    LabModus: TLabel;
+    StringGrid1: TStringGrid;
+    Label3: TLabel;
+    Memo1: TMemo;
+    LabQ1: TLabel;
+    LabQ2: TLabel;
+    LabQ3: TLabel;
+    LabVarian: TLabel;
+    LabSD: TLabel;
+    StringGrid2: TStringGrid;
+    ButRunKel: TButton;
+    ButClearKel: TButton;
+    Label5: TLabel;
+    EditTentang: TEdit;
+    ButSampleKel: TButton;
+    Label6: TLabel;
+    EditA: TEdit;
+    Sa: TLabel;
+    EditB: TEdit;
+    Label7: TLabel;
+    Label8: TLabel;
+    EditC: TEdit;
+    ButInput: TButton;
+    RadioGroup1: TRadioGroup;
+    Memo2: TMemo;
+    Label4: TLabel;
+    GroupBox1: TGroupBox;
+    EditHasil: TEdit;
+    MainMenu1: TMainMenu;
+    About1: TMenuItem;
+    LabVarP: TLabel;
+    LabSDP: TLabel;
+    cbFrek: TCheckBox;
+    ButFrek: TButton;
+    ButExample: TButton;
+    procedure Edit1Change(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure ButSampleKelClick(Sender: TObject);
+    procedure ButRunKelClick(Sender: TObject);
+    procedure ButClearKelClick(Sender: TObject);
+    procedure ButInputClick(Sender: TObject);
+    procedure ButExampleClick(Sender: TObject);
+    procedure About1Click(Sender: TObject);
+    procedure ButFrekClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TForm1.Edit1Change(Sender: TObject);
+var
+ i,n:integer;
+begin
+ n:=strtoint(edit1.text);
+ stringgrid1.Cells[0,0]:=' Data ke:';
+ stringgrid1.ColWidths[1]:=80;
+ stringgrid1.Cells[1,0]:='Isikan data:';
+
+ for i:=1 to n do
+ begin
+  stringgrid1.Cells[0,i]:=inttostr(i);
+ end;
+
+
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+ i,j,n,k,l,v,ftinggi,bantu2:integer;
+ Q11bantu:extended;
+ Q11bantu2:integer;
+ tot_frek:longint;
+ x,modus:array[1..10000] of extended;
+ fx,f2x,f3x:array[1..10000] of integer;
+ f:array[0..10000] of longint;
+ bantu,total,totalXiKuadrat,SqrTotal,varian,varianpop,mean,range,data_frek:extended;
+ Q11,Q21,Q31,Q12,Q22,Q32,bantu1Q12,bantu2Q12,bantu3Q12,bantu4Q12:extended;
+ Q13,Q23,Q33,bantu3Q33,bantu4Q33,bantu1Q13,bantu2Q13,Q14,Q24,Q34,bantu1Q24,bantu2Q24:extended;
+begin
+ n:=strtoint(edit1.text);
+ total:=0;
+ for i:=1 to n do
+ begin
+  x[i]:=strtofloat(stringgrid1.Cells[1,i]);
+  fx[i]:=1;
+  total:=total+x[i];
+ end;
+
+ //Sorting pake BubbleSort Ascending
+ stringgrid1.Cells[3,0]:='   Urut:';
+ i:=1;
+ Repeat
+  k:=1;
+  Repeat
+   if (x[k]>x[k+1]) Then
+    begin
+     bantu:=x[k];
+     x[k]:=x[k+1];
+     x[k+1]:=bantu;
+    end;
+    k:=k+1;
+  until (k>n-1);
+  i:=i+1;
+ until (i>n-1);
+ //Tampil di stringgrid
+ for i:=1 to n do
+  stringgrid1.Cells[3,i]:=floattostr(x[i]);
+ //mean
+ mean:=total/n;
+ //LabMean.Caption:='Mean = '+floattostr(mean);
+ LabMean.Caption:='Mean = '+floattostr(Mean);
+
+ //Median
+  v:=trunc(n/2);
+ if (n mod 2)=1 then //jumlah data ganjil
+  LabMedian.Caption:='Median = '+floattostr(x[v+1])
+ else
+ //jumlah data genap
+  LabMedian.Caption:='Median = '+floattostr((x[v]+x[v+1])/2);
+
+ //Modus
+ MemoModus.Lines.Clear;
+ for i:=1 to n-1 do
+  for j:=i+1 to n do
+     if x[i]=x[j] then fx[i]:=fx[i]+1;
+
+  ftinggi:=1;
+
+ for i:=1 to n do
+   if fx[i]>ftinggi then ftinggi:=fx[i];
+
+ j:=0;
+ for i:=1 to n do
+  if fx[i]=ftinggi then
+   begin
+    j:= j+1;
+    modus[j]:=x[i];
+   end;
+
+ if (j=n) then MemoModus.Lines.Add('Tidak ada Modus')
+ else
+ if ftinggi=(n div j) then MemoModus.Lines.Add('Tidak ada Modus')
+ else
+ begin
+  MemoModus.Lines.Add('Banyak modus '+inttostr(j)+' buah yaitu:');
+  for i:=1 to j do
+   MemoModus.Lines.Add(floattostr(modus[i]));
+ end;
+ //Range
+ Range:=x[n]-x[1];
+ LabRange.Caption:='Range = '+floattostr(range);
+
+ //Kuartil (Q)
+ //Kuartil untuk jumlah data (n) ganjil dan jika n ditambah 1, hasilnya habis dibagi 4
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ //tipe 1
+ if (n mod 2 <>0) then
+  if ((n+1) mod 4)=0 then
+ begin
+  Q11:=x[trunc((n+1)/4)];
+  Q21:=x[trunc(2*(n+1)/4)];
+  Q31:=x[trunc(3*(n+1)/4)];
+  LabQ1.Caption:='Q1 = '+floattostr(Q11);
+  LabQ2.Caption:='Q2 = '+floattostr(Q21);
+  LabQ3.Caption:='Q3 = '+floattostr(Q31);
+ end;
+
+ //tipe 2
+ //Kuartil untuk jumlah data (n) ganjil dan jika n ditambah 1, hasilnya tidak habis dibagi 4
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ if (n mod 2 <>0) then
+  if ((n+1) mod 4)<>0 then
+ begin
+  bantu1Q12:=x[trunc((n-1)/4)];
+  bantu2Q12:=x[trunc((n+3)/4)];
+  Q12:=(bantu1Q12+bantu2Q12)/2;
+
+  Q22:=x[trunc(2*(n+1)/4)];
+
+  bantu3Q12:=x[trunc((3*n+1)/4)];
+  bantu4Q12:=x[trunc((3*n+5)/4)];
+  Q32:=(bantu3Q12+bantu4Q12)/2;
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q12);
+  LabQ2.Caption:='Q2 = '+floattostr(Q22);
+  LabQ3.Caption:='Q3 = '+floattostr(Q32);
+ end;
+
+{ //tipe 3
+ //Kuartil untuk jumlah data (n) genap dan habis dibagi 4.
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ if (n mod 2 =0) then
+  if (n mod 4)=0 then
+ begin
+  bantu1Q13:=x[trunc((n-1)/4)];
+  bantu2Q13:=x[trunc((n+3)/4)];
+  Q13:=(bantu1Q13+bantu2Q13)/2;
+
+  Q23:=x[trunc(2*(n+1)/4)];
+
+  bantu3Q33:=x[trunc((3*n+1)/4)];
+  bantu4Q33:=x[trunc((3*n+5)/4)];
+  Q33:=(bantu3Q33+bantu4Q33)/2;
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q13);
+  LabQ2.Caption:='Q2 = '+floattostr(Q23);
+  LabQ3.Caption:='Q3 = '+floattostr(Q33);
+ end;
+ }
+
+  //tipe 3
+ //Kuartil untuk jumlah data (n) genap dan habis dibagi 4.
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ if (n mod 2 =0) then
+  if (n mod 4)=0 then
+ begin
+  bantu1Q13:=x[round((n-1)/4)];
+  bantu2Q13:=x[round((n+3)/4)];
+  Q13:=(bantu1Q13+bantu2Q13)/2;
+
+  //Q23:=x[round(2*(n+1)/4)];  salah rumus??
+  Q23:=((x[v]+x[v+1])/2);
+
+  bantu3Q33:=x[round((3*n+1)/4)];
+  bantu4Q33:=x[round((3*n+5)/4)];
+  Q33:=(bantu3Q33+bantu4Q33)/2;
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q13);
+  LabQ2.Caption:='Q2 = '+floattostr(Q23);
+  LabQ3.Caption:='Q3 = '+floattostr(Q33);
+ end;
+
+ //tipe 4
+ // Kuartil untuk jumlah data (n) genap dan tidak habis dibagi 4.
+ if (n mod 2 =0) then
+  if (n mod 4)<>0 then
+ begin
+  Q14:=x[round((n+2)/4)];
+
+  bantu1Q24:=x[round(n/2)];
+  bantu2Q24:=x[round((n/2)+1)];
+  Q24:=(bantu1Q24+bantu2Q24)/2;
+
+  Q34:=x[round((3*n+2)/4)];
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q14);
+  LabQ2.Caption:='Q2 = '+floattostr(Q24);
+  LabQ3.Caption:='Q3 = '+floattostr(Q34);
+ end;
+
+ //Varian
+ totalXiKuadrat:=0;
+ for i:=1 to n do
+  totalXiKuadrat:=totalXiKuadrat+sqr(x[i]);
+ SqrTotal:=sqr(total);
+ Varian:=(n*totalXiKuadrat-SqrTotal)/(n*(n-1));
+ //LabVarian.Caption:=' Varian = '+ floattostr(varian);
+ //LabSD.Caption:=' SD = '+ floattostr(sqrt(varian));
+ //LabVarian.Caption:='Varian = '+ formatfloat('0.00',varian)+' (sample)';
+ //LabSD.Caption:=' SD = '+formatfloat('0.00',sqrt(varian));
+ LabVarian.Caption:='Varian sample = '+ floattostr(varian);
+ LabSD.Caption:='SD sample = '+floattostr(sqrt(varian));
+ VarianPop:=(n*totalXiKuadrat-SqrTotal)/(n*n);
+ LabVarP.Caption:='Varian populasi = '+ floattostr(varianPop);
+ LabSDP.Caption:='SD populasi = '+floattostr(sqrt(varianPop));
+
+ //dg Frekuensi
+ if cbFrek.Checked=true then
+  begin
+   mean:=0;
+   data_frek:=0;
+   tot_frek:=0;
+   for i:=1 to n do
+   begin
+    x[i]:=strtofloat(stringgrid1.Cells[1,i]);
+    f[i]:=strtoint(stringgrid1.Cells[2,i]);
+    data_frek:=data_frek+x[i]*f[i];
+    tot_frek:=tot_frek+f[i];
+    mean:=data_frek/tot_frek;
+   end;
+   labMean.Caption:='Mean = '+floattostr(mean);
+
+
+   //Sorting pake BubbleSort Ascending
+ stringgrid1.Cells[3,0]:='   Urut:';
+ stringgrid1.ColWidths[4]:=100;
+ stringgrid1.Cells[4,0]:='Frekuensi Urut:';
+
+ for i:=1 to n do
+ begin
+  x[i]:=strtofloat(stringgrid1.Cells[1,i]);
+  f2x[i]:=strtoint(stringgrid1.Cells[2,i]);
+ end;
+
+ i:=1;
+ Repeat
+  k:=1;
+  Repeat
+   if (x[k]>x[k+1]) Then
+    begin
+     bantu:=x[k];
+     bantu2:=f2x[k];
+     x[k]:=x[k+1];
+     f2x[k]:=f2x[k+1];
+     x[k+1]:=bantu;
+     f2x[k+1]:=bantu2;
+    end;
+    k:=k+1;
+  until (k>n-1);
+  i:=i+1;
+ until (i>n-1);
+ //Tampil di stringgrid
+ for i:=1 to n do
+ begin
+  stringgrid1.Cells[3,i]:=floattostr(x[i]);
+  stringgrid1.Cells[4,i]:=floattostr(f2x[i]);
+ end;
+
+  //Range
+ Range:=x[n]-x[1];
+ LabRange.Caption:='Range = '+floattostr(range);
+
+
+ //Median
+ j:=1;
+ i:=1;
+ for k:=1 to n do
+ begin
+  for l:=1 to f2x[i] do
+  begin
+   x[j]:=strtofloat(stringgrid1.Cells[3,k]);
+   inc(j);
+  end;
+  inc(i);
+ end;
+
+ //Kuartil (Q)
+ //Kuartil untuk jumlah data (n) ganjil dan jika n ditambah 1, hasilnya habis dibagi 4
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ //tipe 1
+ if (tot_frek mod 2 <>0) then
+  if ((tot_frek+1) mod 4)=0 then
+ begin
+  Q11:=x[trunc((tot_frek+1)/4)];
+  Q21:=x[trunc(2*(tot_frek+1)/4)];
+  Q31:=x[trunc(3*(tot_frek+1)/4)];
+  LabQ1.Caption:='Q1 = '+floattostr(Q11);
+  LabQ2.Caption:='Q2 = '+floattostr(Q21);
+  LabQ3.Caption:='Q3 = '+floattostr(Q31);
+ end;
+
+ //tipe 2
+ //Kuartil untuk jumlah data (n) ganjil dan jika n ditambah 1, hasilnya tidak habis dibagi 4
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ if (tot_frek mod 2 <>0) then
+  if ((tot_frek+1) mod 4)<>0 then
+ begin
+  bantu1Q12:=x[trunc((tot_frek-1)/4)];
+  bantu2Q12:=x[trunc((tot_frek+3)/4)];
+  Q12:=(bantu1Q12+bantu2Q12)/2;
+
+  Q22:=x[trunc(2*(tot_frek+1)/4)];
+
+  bantu3Q12:=x[trunc((3*tot_frek+1)/4)];
+  bantu4Q12:=x[trunc((3*tot_frek+5)/4)];
+  Q32:=(bantu3Q12+bantu4Q12)/2;
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q12);
+  LabQ2.Caption:='Q2 = '+floattostr(Q22);
+  LabQ3.Caption:='Q3 = '+floattostr(Q32);
+ end;
+
+  //tipe 3
+ //Kuartil untuk jumlah data (n) genap dan habis dibagi 4.
+ //if (n mod 2 <>0) and if ((n+1) mod 4)=0 then
+ if (tot_frek mod 2 =0) then
+  if (tot_frek mod 4)=0 then
+ begin
+  bantu1Q13:=x[round((tot_frek-1)/4)];
+  bantu2Q13:=x[round((tot_frek+3)/4)];
+  Q13:=(bantu1Q13+bantu2Q13)/2;
+
+  //Q23:=x[round(2*(n+1)/4)];  salah rumus??
+  Q23:=((x[v]+x[v+1])/2);
+
+  bantu3Q33:=x[round((3*tot_frek+1)/4)];
+  bantu4Q33:=x[round((3*tot_frek+5)/4)];
+  Q33:=(bantu3Q33+bantu4Q33)/2;
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q13);
+  LabQ2.Caption:='Q2 = '+floattostr(Q23);
+  LabQ3.Caption:='Q3 = '+floattostr(Q33);
+ end;
+
+ //tipe 4
+ // Kuartil untuk jumlah data (n) genap dan tidak habis dibagi 4.
+ if (tot_frek mod 2 =0) then
+  if (tot_frek mod 4)<>0 then
+ begin
+  Q14:=x[round((tot_frek+2)/4)];
+
+  bantu1Q24:=x[round(tot_frek/2)];
+  bantu2Q24:=x[round((tot_frek/2)+1)];
+  Q24:=(bantu1Q24+bantu2Q24)/2;
+
+  Q34:=x[round((3*tot_frek+2)/4)];
+
+  LabQ1.Caption:='Q1 = '+floattostr(Q14);
+  LabQ2.Caption:='Q2 = '+floattostr(Q24);
+  LabQ3.Caption:='Q3 = '+floattostr(Q34);
+ end;
+
+
+ //Modus
+ MemoModus.Lines.Clear;
+ for i:=1 to tot_frek-1 do
+  for j:=i+1 to tot_frek do
+     if x[i]=x[j] then f3x[i]:=f3x[i]+1;
+
+  ftinggi:=1;
+
+ for i:=1 to tot_frek do
+   if f3x[i]>ftinggi then ftinggi:=f3x[i];
+
+ j:=0;
+ for i:=1 to tot_frek do
+  if f3x[i]=ftinggi then
+   begin
+    j:= j+1;
+    modus[j]:=x[i];
+   end;
+
+ if (j=tot_frek) then MemoModus.Lines.Add('Tidak ada Modus')
+ else
+ if ftinggi=(tot_frek div j) then MemoModus.Lines.Add('Tidak ada Modus')
+ else
+ if j=n then MemoModus.Lines.Add('Tidak ada Modus')
+ else
+ begin
+  MemoModus.Lines.Add('Banyak modus '+inttostr(j)+' buah yaitu:');
+  for i:=1 to j do
+   MemoModus.Lines.Add(floattostr(modus[i]));
+ end;
+
+
+
+ //Varian
+
+
+// for i:=1 to tot_frek do
+ // memo1.Lines.Add(floattostr(x[i]));
+
+
+
+ totalXiKuadrat:=0;
+ for i:=1 to tot_frek do
+ begin
+  totalXiKuadrat:=totalXiKuadrat+sqr(x[i]);
+ end;
+ //memo1.Lines.add(floattostr(sqr(x[3])));
+
+ total:=0;
+ for i:=1 to n do
+ begin
+  x[i]:=strtofloat(stringgrid1.Cells[3,i]);
+  f2x[i]:=strtoint(stringgrid1.Cells[4,i]);
+  total:=total+x[i]*f2x[i];
+ end;
+
+
+ SqrTotal:=sqr(total);
+ Varian:=(tot_frek*totalXiKuadrat-SqrTotal)/(tot_frek*(tot_frek-1));
+ //LabVarian.Caption:=' Varian = '+ floattostr(varian);
+ //LabSD.Caption:=' SD = '+ floattostr(sqrt(varian));
+ //LabVarian.Caption:='Varian = '+ formatfloat('0.00',varian)+' (sample)';
+ //LabSD.Caption:=' SD = '+formatfloat('0.00',sqrt(varian));
+ LabVarian.Caption:='Varian sample = '+ floattostr(varian);
+ LabSD.Caption:='SD sample = '+floattostr(sqrt(varian));
+ VarianPop:=(tot_frek*totalXiKuadrat-SqrTotal)/(tot_frek*tot_frek);
+ LabVarP.Caption:='Varian populasi = '+ floattostr(varianPop);
+ LabSDP.Caption:='SD populasi = '+floattostr(sqrt(varianPop));
+
+ //label9.Caption:=floattostr(total)+'+ tot xi^2'+floattostr(totalXiKuadrat);
+
+
+
+
+{
+ for i:=1 to tot_frek do
+  memo1.Lines.Add(floattostr(x[i]));
+ }
+ //label9.caption:=floattostr(x[6]);
+
+ {
+ for i:=1 to tot_frek do
+  x[i]:=x[i];
+  }
+
+  //median
+  v:=trunc(tot_frek/2);
+  if (tot_frek mod 2)=1 then //jumlah data ganjil
+   LabMedian.Caption:='Median = '+floattostr(x[v+1])
+  else
+ //jumlah data genap
+   LabMedian.Caption:='Median = '+floattostr((x[v]+x[v+1])/2);
+
+
+
+ end;
+
+
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+ i:integer;
+begin
+ labMean.Caption:='Mean =';
+ labMedian.Caption:='Median =';
+ memoModus.Lines.Clear;
+ labQ1.Caption:='Q1 =';
+ labQ2.Caption:='Q2 =';
+ labQ3.Caption:='Q3 =';
+ labVarian.Caption:='Varian =';
+ labSD.Caption:='SD =';
+ LabRange.Caption:='Range =';
+ LabVarP.Caption:='Varian populasi =';
+ LabSDP.Caption:='SD populasi =';
+
+
+ cbFrek.Checked:=false;
+
+
+ edit1.text:=inttostr(0);
+ for i := 0 to StringGrid1.RowCount
+  do StringGrid1.Rows[i].Clear;
+end;
+
+//Data Berkelompok
+//Sample
+procedure TForm1.ButSampleKelClick(Sender: TObject);
+var
+ i:integer;
+ x1,x2:array[0..10000] of extended;
+begin
+ //EditJumInt.Text:=inttostr(6);
+ EditA.Text:=inttostr(151);
+ EditB.Text:=inttostr(180);
+ EditC.Text:=inttostr(5);
+ EditTentang.Text:='Tinggi badan (cm)';
+ stringgrid2.Cells[0,0]:='Kelas Int ke :';
+ stringgrid2.Cells[1,0]:='Dari :';
+ stringgrid2.Cells[2,0]:='Sampai :';
+
+  stringgrid2.ColWidths[0]:=80;
+  stringgrid2.ColWidths[3]:=110;
+  stringgrid2.Cells[3,0]:=EditTentang.Text;
+  stringgrid2.ColWidths[4]:=80;
+  stringgrid2.ColWidths[5]:=100;
+  stringgrid2.Cells[4,0]:='Frekuensi (fi)';
+ // stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+
+  stringgrid2.Cells[1,1]:=floattostr(151);
+  stringgrid2.Cells[2,1]:=floattostr(155);
+  stringgrid2.Cells[1,2]:=floattostr(156);
+  stringgrid2.Cells[2,2]:=floattostr(160);
+  stringgrid2.Cells[1,3]:=floattostr(161);
+  stringgrid2.Cells[2,3]:=floattostr(165);
+  stringgrid2.Cells[1,4]:=floattostr(166);
+  stringgrid2.Cells[2,4]:=floattostr(170);
+  stringgrid2.Cells[1,5]:=floattostr(171);
+  stringgrid2.Cells[2,5]:=floattostr(175);
+  stringgrid2.Cells[1,6]:=floattostr(176);
+  stringgrid2.Cells[2,6]:=floattostr(180);
+  stringgrid2.Cells[2,6]:=floattostr(180);
+
+  stringgrid2.Cells[4,1]:=inttostr(3);
+  stringgrid2.Cells[4,2]:=inttostr(4);
+  stringgrid2.Cells[4,3]:=inttostr(4);
+  stringgrid2.Cells[4,4]:=inttostr(5);
+  stringgrid2.Cells[4,5]:=inttostr(3);
+  stringgrid2.Cells[4,6]:=inttostr(2);
+
+  for i:=1 to 6 do
+  begin
+   stringgrid2.Cells[0,i]:=inttostr(i);
+   x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+   x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+   stringgrid2.Cells[3,i]:=floattostr(x1[i])+' - '+floattostr(x2[i]);
+  end;
+
+end;
+
+procedure TForm1.ButRunKelClick(Sender: TObject);
+var
+ a,b,c,i,n,totalfi,letak_med,temp,kelas_median,b1,b2,letakQ1:integer;
+ tempQ1,kelas_kuartil,letakQ2,letakQ3,tempQ2,tempQ3,kelas_kuartilQ1,kelas_kuartilQ2,kelas_kuartilQ3:integer;
+ xi,x1,x2:array[0..10000]of extended;
+ fi,fk,sel,selisihQ1,selisihQ2,selisihQ3:array[0..10000] of integer;
+ rata,totalfixi,batas_bawah_kelMedian,median,modus,batas_bawah_kelKuartilQ1:extended;
+ Q1,Q2,Q3,bantuQ1,bantuQ2,bantuQ3,batas_bawah_kelKuartilQ2,batas_bawah_kelKuartilQ3:extended;
+ totfixi,totfixikwad,varian,SD:extended;
+begin
+// n:=strtoint(editJumInt.text);
+ a:= strtoint(EditA.Text);
+ b:= strtoint(EditB.Text);
+ c:= strtoint(EditC.Text);
+ n:=ceil((b-a)/c);
+
+ stringgrid2.ColWidths[0]:=80;
+ stringgrid2.ColWidths[5]:=100;
+// stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+ stringgrid2.Cells[3,0]:=EditTentang.Text;
+ stringgrid2.ColWidths[3]:=110;
+
+
+ if radiogroup1.ItemIndex=0 then    //mean
+ begin
+ totalfixi:=0;
+ totalfi:=0;
+ for i:=1 to n do
+ begin
+  //xi titik tengah
+  x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+  x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  xi[i]:=x1[i]+(x2[i]-x1[i])/2;
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+  totalfixi:=totalfixi+fi[i]*xi[i];
+  totalfi:=totalfi+fi[i];
+ end;
+  stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+  rata:=totalfixi/totalfi;
+ //editHasil.Text:='Mean = '+formatfloat('0.00',rata);
+ editHasil.Text:='Mean = '+floattostr(rata);
+ end
+ else
+ if radiogroup1.ItemIndex=1 then //median
+ begin
+  //Q2=Median
+  //letak Q2 pada frekuensi
+  totalfi:=0;
+  stringgrid2.Cells[5,0]:='Frekuensi kumulatif (fk)';
+  for i:=1 to n do
+  begin
+   x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+   x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+   fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+   totalfi:=totalfi+fi[i];
+   stringgrid2.Cells[5,i]:=inttostr(totalfi);
+   fk[i]:=strtoint(stringgrid2.Cells[5,i]);
+  end;
+
+  letakQ2:=ceil(1/2 *totalfi);
+  for i:=1 to n do
+   selisihQ2[i]:=strtoint(stringgrid2.Cells[5,i])-letakQ2;
+
+  tempQ2:=selisihQ2[n];
+  for i:=1 to n do
+  begin
+   if selisihQ2[i]>0 then
+   begin
+    if selisihQ2[i]<tempQ2 then tempQ2:=selisihQ2[i]
+   end;
+  end;
+
+  kelas_kuartilQ2:=1;
+  for i:=1 to n do
+   if tempQ2=selisihQ2[i] then kelas_kuartilQ2:=i;
+
+  batas_bawah_kelKuartilQ2:=(x2[kelas_kuartilQ2-1]+x1[kelas_kuartilQ2])/2;
+  bantuQ2:=(2*totalfi)/4;
+  Q2:=batas_bawah_kelKuartilQ2+c*((bantuQ2-fk[kelas_kuartilQ2-1])/fi[kelas_kuartilQ2]);
+  editHasil.Text:='Median = '+floattostr(Q2);
+ { fi[1]:=strtoint(stringgrid2.Cells[4,1]);//   =2
+  stringgrid2.Cells[5,0]:='Frekuensi kumulatif (fk)';
+  fi[0]:=0;
+  totalfi:=0;
+  for i:=1 to n do
+  begin
+  //Frekuensi Kumulatif
+   x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+   x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+   fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+   totalfi:=totalfi+fi[i];
+   stringgrid2.Cells[5,i]:=inttostr(totalfi);
+  end;
+  //menentukan kelas median
+  //letak median
+  //letak_med:=round(totalfi/2);
+  letak_med:=ceil(totalfi/2);
+  for i:=1 to n do
+  begin
+   fk[i]:=strtoint(stringgrid2.cells[5,i]);
+   //selisih minimum absolut antara fk[i] dg letak_med
+   sel[i]:=abs(fk[i]-letak_med);
+  end;
+
+  temp:=sel[1];
+
+  for i:=1 to n do
+   if sel[i]<temp then temp:=sel[i];
+
+  kelas_median:=1;
+  for i:=1 to n do
+    if temp=sel[i] then kelas_median:=i;
+
+   batas_bawah_kelMedian:=(x2[kelas_median-1]+x1[kelas_median])/2;
+   median:=batas_bawah_kelMedian+(    (totalfi/2)-fk[kelas_median-1])/fi[kelas_median]*c;
+   editHasil.Text:='Median = '+formatfloat('0.00',median);
+ }
+
+
+ end
+ else
+  if radiogroup1.ItemIndex=2 then //modus
+ begin
+  //Modus
+  for i:=1 to n do
+  begin
+   x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+   x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+   fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+  end;
+
+  //Menentukan kelas modus dg frekuensi fi terbanyak
+  temp:=fi[1];
+
+  for i:=1 to n do
+   if fi[i]>temp then temp:=fi[i];
+
+
+  kelas_median:=1;
+  for i:=1 to n do
+   if temp=fi[i] then kelas_median:=i;
+
+  batas_bawah_kelMedian:=(x2[kelas_median-1]+x1[kelas_median])/2;
+  b1:=temp-fi[kelas_median-1];
+  b2:=temp-fi[kelas_median+1];
+  modus:=batas_bawah_kelMedian+(b1/(b1+b2))*c;
+  editHasil.Text:='Modus = '+floattostr(modus);
+ end
+ else
+ if radiogroup1.ItemIndex=3 then //Kuartil
+ begin
+  totalfi:=0;
+  stringgrid2.Cells[5,0]:='Frekuensi kumulatif (fk)';
+  for i:=1 to n do
+  begin
+   x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+   x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+   fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+   totalfi:=totalfi+fi[i];
+   stringgrid2.Cells[5,i]:=inttostr(totalfi);
+   fk[i]:=strtoint(stringgrid2.Cells[5,i]);
+  end;
+  //letak Q1 pada frekuensi
+  letakQ1:=ceil(1/4 *totalfi);
+  for i:=1 to n do
+   selisihQ1[i]:=strtoint(stringgrid2.Cells[5,i])-letakQ1;
+
+  tempQ1:=selisihQ1[n];
+  for i:=1 to n do
+  begin
+   if selisihQ1[i]>0 then
+    if selisihQ1[i]<tempQ1 then tempQ1:=selisihQ1[i]
+  end;
+  kelas_kuartilQ1:=1;
+  for i:=1 to n do
+   if tempQ1=selisihQ1[i] then kelas_kuartilQ1:=i;
+
+  batas_bawah_kelKuartilQ1:=(x2[kelas_kuartilQ1-1]+x1[kelas_kuartilQ1])/2;
+  bantuQ1:=(1*totalfi)/4;
+  Q1:=batas_bawah_kelKuartilQ1+c*((bantuQ1-fk[kelas_kuartilQ1-1])/fi[kelas_kuartilQ1]);
+
+  //Q2
+  //letak Q2 pada frekuensi
+  letakQ2:=ceil(1/2 *totalfi);
+  for i:=1 to n do
+   selisihQ2[i]:=strtoint(stringgrid2.Cells[5,i])-letakQ2;
+
+  tempQ2:=selisihQ2[n];
+  for i:=1 to n do
+  begin
+   if selisihQ2[i]>0 then
+   begin
+    if selisihQ2[i]<tempQ2 then tempQ2:=selisihQ2[i]
+   end;
+  end;
+
+  kelas_kuartilQ2:=1;
+  for i:=1 to n do
+   if tempQ2=selisihQ2[i] then kelas_kuartilQ2:=i;
+
+  batas_bawah_kelKuartilQ2:=(x2[kelas_kuartilQ2-1]+x1[kelas_kuartilQ2])/2;
+  bantuQ2:=(2*totalfi)/4;
+  Q2:=batas_bawah_kelKuartilQ2+c*((bantuQ2-fk[kelas_kuartilQ2-1])/fi[kelas_kuartilQ2]);
+
+   //Q3
+  //letak Q2 pada frekuensi
+  letakQ3:=ceil(3/4 *totalfi);
+  for i:=1 to n do
+   selisihQ3[i]:=strtoint(stringgrid2.Cells[5,i])-letakQ3;
+
+  tempQ3:=selisihQ3[n];
+  for i:=1 to n do
+  begin
+   if selisihQ3[i]>0 then
+   begin
+    if selisihQ3[i]<tempQ3 then tempQ3:=selisihQ3[i]
+   end;
+  end;
+
+  kelas_kuartilQ3:=1;
+  for i:=1 to n do
+   if tempQ3=selisihQ3[i] then kelas_kuartilQ3:=i;
+
+  batas_bawah_kelKuartilQ3:=(x2[kelas_kuartilQ3-1]+x1[kelas_kuartilQ3])/2;
+  bantuQ3:=(3*totalfi)/4;
+  Q3:=batas_bawah_kelKuartilQ3+c*((bantuQ3-fk[kelas_kuartilQ3-1])/fi[kelas_kuartilQ3]);
+
+  editHasil.Text:='Q1='+floattostr(Q1)+'; Q2='+floattostr(Q2)+'; Q3='+floattostr(Q3);
+ end
+ else
+ if radiogroup1.ItemIndex=4 then    //Varian
+ begin
+ stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+ //stringgrid2.Cells[6,0]:='   xi^2';
+ //stringgrid2.Cells[7,0]:='fi.xi^2';
+ //totalfixi:=0;
+ totfixi:=0;
+ totalfi:=0;
+ totfixikwad:=0;
+ for i:=1 to n do
+ begin
+  //xi titik tengah
+  x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+  x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  xi[i]:=x1[i]+(x2[i]-x1[i])/2;
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+  //totalfixi:=totalfixi+fi[i]*xi[i];
+  totalfi:=totalfi+fi[i];
+  //xikwad[i]:=sqr(xi[i]);
+  //stringgrid2.Cells[6,i]:=floattostr(sqr(xi[i]));                    //xikwadrat / (xi)^2
+  //stringgrid2.Cells[7,i]:=floattostr(fi[i]*sqr(xi[i]));                    //
+  totfixi:=totfixi+fi[i]*xi[i]; //
+  totfixikwad:=totfixikwad+fi[i]*sqr(xi[i]);
+ end;
+  varian:=(totfixikwad-(sqr(totfixi)/totalfi))/(totalfi-1);
+//  varian:=(totfixikwad-(sqr(totfixi)/totalfi))/(totalfi-1);
+  editHasil.Text:='Varian = '+floattostr(varian);
+ end
+ else
+ //if radiogroup1.ItemIndex=5 then    //SD
+ begin
+ stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+ //stringgrid2.Cells[6,0]:='   xi^2';
+ //stringgrid2.Cells[7,0]:='fi.xi^2';
+ totfixi:=0;
+ totalfi:=0;
+ totfixikwad:=0;
+ for i:=1 to n do
+ begin
+  //xi titik tengah
+  x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+  x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  xi[i]:=x1[i]+(x2[i]-x1[i])/2;
+  stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+  fi[i]:=strtoint(stringgrid2.Cells[4,i]);
+//  totalfixi:=totalfixi+fi[i]*xi[i];
+  totalfi:=totalfi+fi[i];
+  //xikwad[i]:=sqr(xi[i]);
+  //stringgrid2.Cells[6,i]:=floattostr(sqr(xi[i]));                    //xikwadrat / (xi)^2
+  //stringgrid2.Cells[7,i]:=floattostr(fi[i]*sqr(xi[i]));                    //
+  totfixi:=totfixi+fi[i]*xi[i]; //
+  totfixikwad:=totfixikwad+fi[i]*sqr(xi[i]);
+ end;
+
+  SD:=sqrt((totfixikwad-(sqr(totfixi)/totalfi))/(totalfi-1));
+  editHasil.Text:='SD = '+floattostr(SD);
+ end;
+
+end;
+
+procedure TForm1.ButClearKelClick(Sender: TObject);
+var
+ i:integer;
+begin
+ editTentang.Clear;
+ editA.Clear;
+ editB.Clear;
+ editC.Clear;
+ editHasil.Clear;
+
+ for i := 0 to StringGrid2.RowCount do
+  StringGrid2.Rows[i].Clear;
+end;
+
+procedure TForm1.ButInputClick(Sender: TObject);
+var
+ i,a,b,c,n:integer;
+ x1,x2:array[1..10000] of extended;
+ // n:extended;
+begin
+ a:= strtoint(EditA.Text);
+ b:= strtoint(EditB.Text);
+ c:= strtoint(EditC.Text);
+ n:=ceil((b-a)/c);
+ stringgrid2.Cells[0,0]:='Kelas Int ke:';
+ stringgrid2.ColWidths[0]:=80;
+ stringgrid2.Cells[1,0]:=' Dari :';
+ stringgrid2.Cells[2,0]:=' Sampai :';
+ stringgrid2.Cells[4,0]:='Frekuensi (fi)';
+ stringgrid2.ColWidths[3]:=100;
+ stringgrid2.Cells[3,0]:=EditTentang.Text;
+ stringgrid2.ColWidths[4]:=80;
+// stringgrid2.Cells[5,0]:='Titik tengah (xi)';
+ stringgrid2.ColWidths[5]:=100;
+
+ for i:=1 to n do
+ begin
+  stringgrid2.Cells[0,i]:=inttostr(i);
+  stringgrid2.Cells[1,i]:=inttostr(a);
+  stringgrid2.Cells[2,i]:=inttostr(a+c-1);
+  stringgrid2.Cells[3,i]:=inttostr(a)+' - '+inttostr(a+c-1);
+  a:=a+c;
+
+  x1[i]:=strtofloat(stringgrid2.Cells[1,i]);
+  x2[i]:=strtofloat(stringgrid2.Cells[2,i]);
+ // stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+ // xi[i]:=x1[i]+(x2[i]-x1[i])/2;   //xi titik tengah
+ // stringgrid2.Cells[5,i]:=floattostr(xi[i]);
+
+ end;
+end;
+
+//input
+procedure TForm1.ButExampleClick(Sender: TObject);
+begin
+ edit1.Text:='3';
+ cbFrek.Checked:=true;
+// n:=strtoint(edit1.text);
+ stringgrid1.Cells[0,0]:=' Data ke:';
+ stringgrid1.ColWidths[1]:=80;
+ stringgrid1.Cells[1,0]:='Isikan data:';
+ stringgrid1.Cells[1,1]:='2';
+ stringgrid1.Cells[1,2]:='1';
+ stringgrid1.Cells[1,3]:='3';
+
+ stringgrid1.Cells[2,0]:='Frekuensi:';
+ //stringgrid1.ColWidths[2]:=120;
+ stringgrid1.Cells[2,1]:='3';
+ stringgrid1.Cells[2,2]:='2';
+ stringgrid1.Cells[2,3]:='1';
+
+
+end;
+
+procedure TForm1.About1Click(Sender: TObject);
+ const
+ sAbout = '|======== Nix Statistic ========|' + #13#10 +
+          '' + #13#10 +
+          'Version 2.0 - Build Apr 7, 2018'+ #13#10 +
+          'Created by Lukas Setiawan' + #13#10 +
+          'Copyright (c) 2018. All Rights Reserved.' + #13#10 +
+          'lukassetiawan@yahoo.com' + #13#10 +
+          'My other works :'+ #13#10 +
+          'https://bitbucket.org/nixz97/nix/downloads/' + #13#10 +
+          '' + #13#10 +
+          'Riwayat Pendidikan : ' + #13#10 +
+          ''+#13#10 +
+          '1. SD IPPOR Eretan Wetan' + #13#10 +
+          '2. SMP Negeri Kandanghaur' + #13#10 +
+          '3. SMA BOPKRI I (BOSA) Yogyakarta' + #13#10 +
+          '4. Teknik Kimia Angkatan 94 (NRP 6294015) Universitas Parahyangan Bandung' + #13#10 +
+          '5. Teknik Informatika STMIK Indonesia Mandiri Bandung (NIM 36026084)' + #13#10 +
+          '' + #13#10 +
+          'To Clarine Annabell Zhou (Eyin)'+ #13#10 +
+          '' + #13#10 +
+          'Menerima Donasi untuk pengembangan software'+ #13#10;
+
+begin
+ MessageDlg( sAbout, mtInformation, [mbOK], 0);
+end;
+
+procedure TForm1.ButFrekClick(Sender: TObject);
+begin
+ //n:=strtoint(edit1.text);
+// stringgrid1.Cells[0,0]:=' Data ke:';
+// stringgrid1.Cells[1,0]:='  Isikan:';
+ if cbFrek.Checked=true then
+  stringgrid1.Cells[2,0]:='Frekuensi:';
+ //stringgrid1.ColWidths[2]:=120;
+
+ {
+ for i:=1 to n do
+ begin
+  stringgrid1.Cells[0,i]:=inttostr(i);
+ end;
+  }
+// if cbFrek.Checked=true then
+ //StringGrid1
+end;
+
+end.
