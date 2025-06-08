@@ -10,4 +10,5 @@ To solve statistical problems like Mean, Median, Modus, Range, Quartile, Standar
 Build in Delphi 7.<br>
 ## 2. Area Polygon
 To counting Area of Polygon with input data is the coordinates points of polygon, as the result we got Area. The form of polygon will be display and the Area also.<br>
+Polygon is multiple of triangles, the area of triangle count using Heron's formula. Total area of polygon is total areas of each triangle.<br> 
 Build in Delphi 7.<br>
