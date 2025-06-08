@@ -15,6 +15,6 @@ Polygon is multiple of triangles, the area of triangle count using Heron's formu
 Build in Lazarus 1.8<br>
 ## 2. Polynomial Division
 To counting when Polynomial divide by other polynomial.<br>
-As the input is degree of Polynomial Dividend, Polynomial divisor, input in the grid table coefficient of both polynomial.<br>
+As the input is degree of Polynomial Dividend, Polynomial divisor, input in the grid table the coefficients of both polynomial.<br>
 As the result we got Quotient and Remainder.<br> 
 Build in Lazarus 1.8<br>
