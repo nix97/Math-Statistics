@@ -12,3 +12,8 @@ Build in Delphi 7.<br>
 To counting Area of Polygon with input data is the coordinates points of polygon, as the result we got Area. The form of polygon will be display and the Area also.<br>
 Polygon is multiple of triangles, the area of triangle count using Heron's formula. Total area of polygon is total areas of each triangle.<br> 
 Build in Lazarus 1.8<br>
+## 2. Polynomial Division
+To counting when Polynomial divide by other polynomial.<br>
+As the input is degree of Polynomial Dividend, Polynomial divisor, input in the grid table coefficient of both polynomial.<br>
+As the result we got Quotient and Remainder.<br> 
+Build in Lazarus 1.8<br>
