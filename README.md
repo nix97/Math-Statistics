@@ -2,9 +2,8 @@
 ![Issues](https://img.shields.io/github/issues/nix97/math-statistics)
 ![Stars](https://img.shields.io/github/stars/nix97/math-statistics)
 ![Lazarus](https://img.shields.io/badge/Built%20with-Lazarus-blue?logo=pascal)
-![Delphi](https://img.shields.io/badge/Language-Delphi-EA1F63?logo=delphi&logoColor=white)
 ![Mean/SD](https://img.shields.io/badge/Statistics-Mean%20%7C%20SD%20%7C%20Var-blue)
-![Delphi](https://img.shields.io/badge/Built%20with-Delphi-blue?logo=delphi&logoColor=white)
+![Delphi](https://img.shields.io/badge/Built%20with-Delphi-red?logo=delphi&logoColor=white)
 
 # Math-Statistics
 ## 1. Nix Statistics
