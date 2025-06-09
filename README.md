@@ -1,4 +1,4 @@
-?![License](https://img.shields.io/github/license/nix97/math-statistics)
+![License](https://img.shields.io/github/license/nix97/math-statistics)
 ![Issues](https://img.shields.io/github/issues/nix97/math-statistics)
 ![Stars](https://img.shields.io/github/stars/nix97/math-statistics)
 ![Lazarus](https://img.shields.io/badge/Built%20with-Lazarus-blue?logo=pascal)
